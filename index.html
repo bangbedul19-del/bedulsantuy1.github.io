@@ -39,7 +39,7 @@ function runRaceTest() {
   setResult("Menjalankan tes... pastikan popup tidak diblokir.", "warn");
 
   // 1. Buka window baru (mulai sebagai about:blank)
-  let win = window.open("about:blank", "_blank");
+  let win = window.open("https://www.google.com", "_blank");
 
   if (!win) {
     setResult("Popup diblokir oleh browser. Izinkan popup untuk situs ini lalu coba lagi.", "err");
@@ -119,3 +119,4 @@ function runRaceTest() {
 
 </body>
 </html>
+
