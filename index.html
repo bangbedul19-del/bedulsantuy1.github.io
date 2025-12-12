@@ -2,48 +2,49 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<title>Best-Effort UI Timing PoC</title>
+<title>External Intent – Adaptive Delay</title>
 <style>
-  body{font-family:system-ui,Arial;padding:40px}
+  body{font-family:system-ui;padding:40px}
   button{padding:14px 22px;font-size:16px}
-  #log{margin-top:12px;color:#555;white-space:pre-wrap}
+  pre{margin-top:12px;color:#555;white-space:pre-wrap}
 </style>
 </head>
 <body>
 
-<h3>Open Target → Delayed Browser UI</h3>
+<h3>Open Target → External App Dialog (Adaptive Delay)</h3>
 <p>
-Klik sekali. Tab baru dibuka ke target. Setelah delay (agar target terlihat penuh),
-aksi browser-level (download) dipicu dari tab asal.
+Klik sekali. Tab baru dibuka ke target. Setelah beberapa delay percobaan,
+intent eksternal dipicu (best-effort).
 </p>
 
 <button id="go">Run</button>
-<div id="log"></div>
+<pre id="log"></pre>
 
 <script>
-const log = s => document.getElementById('log').textContent += s + "\n";
+const logEl = document.getElementById('log');
+const log = s => logEl.textContent += s + "\n";
+
+// Delay percobaan (ms)
+const DELAYS = [1200, 1800, 2400, 3000];
 
 document.getElementById('go').onclick = () => {
   log("User click");
 
-  // 1) Buka tab target (user gesture)
+  // 1) Buka tab target (pindah fokus)
   window.open("https://www.google.com", "_blank");
   log("Opened target tab");
 
-  // 2) Delay agar target kemungkinan sudah load penuh
-  //    Android Chrome sering butuh 1500–3000ms
-  setTimeout(() => {
-    log("Triggering browser UI (download)");
-
-    // 3) Aksi browser-level: download
-    const a = document.createElement('a');
-    a.href = "data:application/octet-stream,TEST";
-    a.download = "poc.bin";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-
-  }, 2200); // tweak 1500–3000ms
+  // 2) Coba intent di beberapa delay (stop di yang pertama berhasil)
+  let fired = false;
+  DELAYS.forEach(d => {
+    setTimeout(() => {
+      if (fired) return;
+      fired = true;
+      log("Trigger intent at " + d + " ms");
+      location.href =
+        "intent://scan/#Intent;scheme=zxing;package=com.google.zxing.client.android;end";
+    }, d);
+  });
 };
 </script>
 
