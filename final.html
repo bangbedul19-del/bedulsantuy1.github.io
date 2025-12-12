@@ -1,8 +1,29 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head><title>Final</title></head>
-<body>
-  <h1>Final page</h1>
-  <p>Halaman dummy untuk navigasi.</p>
+<head><meta charset="utf-8"><title>Permission After Tab Switch</title></head>
+<body style="font-family:system-ui;padding:40px">
+<h3>Open Target → Permission Prompt</h3>
+<button id="go">Run</button>
+<pre id="log"></pre>
+<script>
+const log=s=>logEl.textContent+=s+"\n";
+const logEl=document.getElementById('log');
+
+document.getElementById('go').onclick=async()=>{
+  log("Click");
+  window.open("https://www.google.com","_blank");
+  log("Opened target tab");
+
+  // Tunda agar target tampil
+  setTimeout(async()=>{
+    log("Requesting permission");
+    try{
+      // Contoh: Notifications (butuh HTTPS)
+      const p = await Notification.requestPermission();
+      log("Permission result: "+p);
+    }catch(e){ log("Error: "+e); }
+  }, 2200);
+};
+</script>
 </body>
 </html>
